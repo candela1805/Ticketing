@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seleccionar asientos</title>
+  <link rel="stylesheet" href="butacas.css">
+</head>
+<body>
+  <header class="header">
+    <h1>Seleccionar asientos</h1>
+  </header>
+
+  <div class="layout">
+    <main class="main">
+      <div class="top-info">
+        <span id="selectedEventText" class="event-title">Evento</span>
+
+        <div class="legend-inline">
+          <div><span class="box available"></span> Disponible</div>
+          <div><span class="box reserved"></span> Reservado</div>
+          <div><span class="box sold"></span> Vendido</div>
+          <div><span class="box selected"></span> Seleccionado</div>
+        </div>
+      </div>
+
+      <div class="stage" aria-label="Escenario"></div>
+      <div id="seatsGrid" class="seats-grid"></div>
+
+      <div class="selection">
+        <p id="selectedSeatsText">Butacas seleccionadas: Ninguna</p>
+        <button id="confirmBtn" type="button">Confirmar selección</button>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

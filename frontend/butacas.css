@@ -1,0 +1,187 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #020617;
+  color: white;
+}
+
+.header {
+  padding: 20px;
+  text-align: center;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.layout {
+  display: flex;
+}
+
+.main {
+  flex: 1;
+  padding: 20px;
+}
+
+.top-info {
+  margin-bottom: 20px;
+}
+
+.event-title {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 2.8rem;
+  font-weight: 700;
+}
+
+.legend-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+}
+
+.legend-inline > div {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 1.4rem;
+}
+
+.box {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+.box.available {
+  background: #22c55e;
+}
+
+.box.reserved {
+  background: #facc15;
+}
+
+.box.sold {
+  background: #ef4444;
+}
+
+.box.selected {
+  background: #3b82f6;
+}
+
+.stage {
+  height: 420px;
+  margin-bottom: 30px;
+  border-radius: 8px;
+  background: url("ImagenEscenario.png") no-repeat center center / cover;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+.seats-grid {
+  margin-top: 20px;
+}
+
+.sector-title {
+  margin: 30px 0 10px;
+  color: #eeeef0;
+  font-size: 1.8rem;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 6px 0;
+}
+
+.row + .row {
+  margin-top: 10px;
+}
+
+.row-label {
+  width: 30px;
+  margin-right: 10px;
+  color: #eeeef0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+.seat {
+  width: 35px;
+  height: 35px;
+  margin: 3px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.seat:disabled {
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+.seat.available {
+  background: #22c55e;
+}
+
+.seat.reserved {
+  background: #f59e0b;
+}
+
+.seat.sold {
+  background: #ef4444;
+}
+
+.seat.selected {
+  background: #3b82f6;
+  color: white;
+}
+
+.selection {
+  margin-top: 20px;
+}
+
+#confirmBtn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #3b82f6;
+  color: white;
+  cursor: pointer;
+}
+
+#confirmBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+@media (max-width: 640px) {
+  .main {
+    padding: 16px;
+  }
+
+  .event-title {
+    font-size: 2rem;
+  }
+
+  .legend-inline > div {
+    font-size: 1rem;
+  }
+
+  .stage {
+    height: 260px;
+  }
+
+  .seat {
+    width: 32px;
+    height: 32px;
+  }
+}
