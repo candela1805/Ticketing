@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ticketing</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>Ticketing</h1>
+      <p>Tus entradas, sin filas y al instante</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="event-admin">
+      <div class="event-admin-header">
+        <h2>Crear evento provisorio</h2>
+        <button id="toggleCreateEventBtn" class="secondary-btn" type="button">Nuevo evento</button>
+      </div>
+
+      <form id="createEventForm" class="event-form" hidden>
+        <label>
+          Nombre
+          <input id="eventName" name="eventName" type="text" placeholder="Recital acustico" required>
+        </label>
+
+        <label>
+          Lugar
+          <input id="eventVenue" name="eventVenue" type="text" placeholder="Teatro Central" required>
+        </label>
+
+        <label>
+          Fecha
+          <input id="eventDate" name="eventDate" type="datetime-local" required>
+        </label>
+
+        <button id="createEventBtn" class="event-btn" type="submit">Crear evento</button>
+        <p id="createEventMessage" class="form-message" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <h2 class="section-title">Proximos eventos</h2>
+    <div id="eventsList" class="events-grid"></div>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2026 Ticketing. Todos los derechos reservados</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
