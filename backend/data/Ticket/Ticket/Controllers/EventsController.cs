@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Ticket.Data;
 using Ticket.DTOs;
 using Ticket.Models;
+using Ticket.Services;
 
 namespace Ticket.Controllers;
 
@@ -15,10 +16,14 @@ public class EventsController : ControllerBase
     private const string AvailableStatus = "Available";
 
     private readonly AppDbContext _context;
+    private readonly IReservationExpirationService _reservationExpirationService;
 
-    public EventsController(AppDbContext context)
+    public EventsController(
+        AppDbContext context,
+        IReservationExpirationService reservationExpirationService)
     {
         _context = context;
+        _reservationExpirationService = reservationExpirationService;
     }
 
     [HttpGet]
@@ -32,7 +37,15 @@ public class EventsController : ControllerBase
                 name = eventEntity.Name,
                 eventDate = eventEntity.EventDate,
                 venue = eventEntity.Venue,
-                status = eventEntity.Status
+                status = eventEntity.Status,
+                sectors = eventEntity.Sectors
+                    .Select(sector => new
+                    {
+                        id = sector.Id,
+                        name = sector.Name,
+                        price = sector.Price
+                    })
+                    .ToList()
             })
             .ToListAsync();
 
@@ -42,6 +55,12 @@ public class EventsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateEvent([FromBody] CreateEventRequest request)
     {
+        var user = await GetRequestUserAsync();
+        if (user is null || !UserRoles.CanManageEvents(user.Role))
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = "Solo empleados pueden crear eventos" });
+        }
+
         var validationError = ValidateCreateEventRequest(request);
         if (validationError is not null)
         {
@@ -92,6 +111,8 @@ public class EventsController : ControllerBase
     [HttpGet("{eventId}/seats")]
     public async Task<IActionResult> GetSeats(int eventId)
     {
+        await _reservationExpirationService.ReleaseExpiredReservationsAsync();
+
         var eventExists = await _context.Events.AnyAsync(eventEntity => eventEntity.Id == eventId);
 
         if (!eventExists)
@@ -123,6 +144,82 @@ public class EventsController : ControllerBase
             .ToListAsync();
 
         return Ok(seats);
+    }
+
+    [HttpDelete("{eventId}")]
+    public async Task<IActionResult> DeleteEvent(int eventId)
+    {
+        var ev = await _context.Events
+            .Include(e => e.Sectors)
+                .ThenInclude(s => s.Seats)
+                    .ThenInclude(se => se.Reservations)
+            .Include(e => e.Sectors)
+                .ThenInclude(s => s.Seats)
+                    .ThenInclude(se => se.Purchases)
+            .FirstOrDefaultAsync(e => e.Id == eventId);
+
+        if (ev == null)
+        {
+            return NotFound(new
+            {
+                success = false,
+                message = "Event not found"
+            });
+        }
+
+        _context.Purchases.RemoveRange(
+            ev.Sectors.SelectMany(s => s.Seats)
+                      .SelectMany(se => se.Purchases));
+
+        _context.Reservations.RemoveRange(
+            ev.Sectors.SelectMany(s => s.Seats)
+                      .SelectMany(se => se.Reservations));
+
+        _context.Seats.RemoveRange(
+            ev.Sectors.SelectMany(s => s.Seats));
+
+        _context.Sectors.RemoveRange(ev.Sectors);
+
+        _context.Events.Remove(ev);
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            success = true,
+            message = "Event deleted successfully"
+        });
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateEvent(int id, [FromBody] CreateEventRequest updatedEvent)
+    {
+        var ev = await _context.Events
+            .Include(e => e.Sectors)
+            .FirstOrDefaultAsync(e => e.Id == id);
+
+        if (ev == null)
+        {
+            return NotFound();
+        }
+
+        ev.Name = updatedEvent.Name;
+        ev.Venue = updatedEvent.Venue;
+        ev.EventDate = updatedEvent.EventDate;
+
+        _context.Sectors.RemoveRange(ev.Sectors);
+
+        ev.Sectors = updatedEvent.Sectors.Select(s => new Sector
+        {
+            Name = s.Name,
+            Price = s.Price,
+            Capacity = s.Capacity,
+            EventId = id
+        }).ToList();
+
+        await _context.SaveChangesAsync();
+
+        return Ok(ev);
     }
 
     private static string? ValidateCreateEventRequest(CreateEventRequest request)
@@ -186,5 +283,16 @@ public class EventsController : ControllerBase
                 generatedSeats++;
             }
         }
+    }
+
+    private async Task<User?> GetRequestUserAsync()
+    {
+        if (!Request.Headers.TryGetValue("X-User-Id", out var userIdHeader) ||
+            !int.TryParse(userIdHeader, out var userId))
+        {
+            return null;
+        }
+
+        return await _context.Users.FindAsync(userId);
     }
 }

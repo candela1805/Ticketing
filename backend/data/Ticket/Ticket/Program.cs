@@ -17,6 +17,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddScoped<IReservationExpirationService, ReservationExpirationService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IPasswordHashService, PasswordHashService>();
+builder.Services.AddHostedService<ReservationExpirationWorker>();
 
 builder.Services.AddCors(options =>
 {
@@ -42,7 +46,8 @@ app.MapControllers();
 
 using var scope = app.Services.CreateScope();
 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+var passwordHashService = scope.ServiceProvider.GetRequiredService<IPasswordHashService>();
 await context.Database.MigrateAsync();
-await DbSeeder.SeedAsync(context);
+await DbSeeder.SeedAsync(context, passwordHashService);
 
 app.Run();

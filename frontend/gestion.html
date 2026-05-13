@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestión - Ticketing</title>
+  <link rel="stylesheet" href="gestion.css">
+</head>
+
+<body>
+
+  <header class="topbar">
+    <h1>Ticketing</h1>
+    <a href="index.html" class="btn-back">Volver a la tienda</a>
+  </header>
+
+  <section class="panel">
+    <h2>Panel de Control Staff</h2>
+
+    <nav class="menu">
+      <button onclick="mostrar('eventos')"> Eventos</button>
+      <button onclick="mostrar('clientes')"> Clientes</button>
+      <button onclick="mostrar('empleados')"> Empleados</button>
+      <button onclick="mostrar('pagos')"> Pagos</button>
+    </nav>
+
+    <!-- EVENTOS -->
+    <div id="eventos" class="seccion">
+      <h3>Gestión de Eventos</h3>
+
+      <button onclick="crearEvento()">+ Crear Nuevo Evento</button>
+
+      <table id="tablaEventos">
+        <thead>
+          <tr>
+            <th>Evento</th>
+            <th>Fecha</th>
+            <th>Precio</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+   <!-- CLIENTES -->
+<div id="clientes" class="seccion hidden">
+  <h3>Clientes Registrados</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>NOMBRE</th>
+        <th>EMAIL</th>
+        <th class="text-center">ACCIONES</th>
+      </tr>
+    </thead>
+    <tbody id="clientsListTable"></tbody>
+    
+  </table>
+</div>
+
+<!-- EMPLEADOS -->
+<div id="empleados" class="seccion hidden">
+  <div id="staffSection"> <!-- Este es el contenedor que el JS oculta/muestra según el rol -->
+    <h3>Staff del Sistema</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>NOMBRE</th>
+          <th>EMAIL</th>
+          <th>ROL</th>
+          <th class="text-center">ACCIONES</th>
+        </tr>
+      </thead>
+      <tbody id="staffListTable">
+        
+      </tbody>
+    </table>
+  </div>
+</div>
+
+    <!-- PAGOS -->
+    <div id="pagos" class="seccion hidden">
+      <h3>Pagos</h3>
+      <div id="listaPagos"></div>
+    </div>
+
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>

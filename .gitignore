@@ -1,0 +1,18 @@
+# Build output
+**/bin/
+**/obj/
+
+# Visual Studio / local IDE state
+.vs/
+*.user
+*.suo
+*.rsuser
+
+# Local logs
+*.log
+
+# Environment/local secrets
+.env
+.env.*
+!.env.example
+

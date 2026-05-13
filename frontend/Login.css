@@ -1,0 +1,198 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+
+  font-family: Arial, sans-serif;
+
+  background:
+    linear-gradient(
+      rgba(0,0,0,0.65),
+      rgba(0,0,0,0.65)
+    ),
+    url("ImagenConcierto.png")
+    no-repeat center center / cover;
+
+  min-height: 100vh;
+
+  color: white;
+}
+
+.navbar {
+  height: 70px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 40px;
+
+  background: rgba(5, 10, 25, 0.9);
+
+  backdrop-filter: blur(10px);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 50px;
+  height: 50px;
+
+  object-fit: cover;
+}
+
+.logo-text {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  min-height: calc(100vh - 70px);
+
+  padding: 40px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+
+  padding: 40px;
+
+  border-radius: 24px;
+
+  background: rgba(15, 23, 42, 0.92);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  backdrop-filter: blur(12px);
+
+  box-shadow:
+    0 20px 40px rgba(0,0,0,0.45);
+}
+
+.login-card h1 {
+  margin-top: 0;
+  margin-bottom: 10px;
+
+  font-size: 2rem;
+}
+
+.login-subtitle {
+  margin-bottom: 30px;
+
+  opacity: 0.75;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.input-group label {
+  font-size: 0.95rem;
+}
+
+.input-group input {
+  padding: 14px 16px;
+
+  border-radius: 12px;
+
+  border: 1px solid rgba(255,255,255,0.1);
+
+  background: #0f172a;
+
+  color: white;
+
+  font-size: 1rem;
+
+  outline: none;
+
+  transition: 0.25s;
+}
+
+.input-group input:focus {
+  border-color: #3b82f6;
+
+  box-shadow:
+    0 0 0 4px rgba(59,130,246,0.15);
+}
+
+.login-btn {
+  margin-top: 10px;
+
+  padding: 14px;
+
+  border: none;
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #3b82f6
+    );
+
+  color: white;
+
+  font-size: 1rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s,
+    opacity 0.2s;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+
+  opacity: 0.95;
+}
+
+.register-text {
+  margin-top: 28px;
+
+  text-align: center;
+
+  opacity: 0.8;
+}
+
+.register-text a {
+  color: #60a5fa;
+
+  text-decoration: none;
+
+  font-weight: 600;
+}
+
+.register-text a:hover {
+  color: #93c5fd;
+}
+
+.login-message {
+  margin-top: 18px;
+
+  text-align: center;
+
+  color: #fca5a5;
+}

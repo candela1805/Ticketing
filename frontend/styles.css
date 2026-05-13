@@ -9,13 +9,285 @@ body {
   color: white;
 }
 
+/* ================= NAVBAR ================= */
+
+.navbar {
+  height: 70px;
+  background: rgba(5, 10, 25, 0.95);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 0 40px;
+
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  backdrop-filter: blur(10px);
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 20px;
+}
+
+.auth-buttons a {
+  text-decoration: none;
+  color: white;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+#myTicketsBtn {
+
+  text-decoration: none;
+
+  color: white;
+
+  font-size: 1rem;
+
+  transition: 0.3s;
+
+  cursor: pointer;
+}
+
+#myTicketsBtn:hover {
+  color: #3b82f6;
+}
+
+#cartBtn {
+
+  text-decoration: none;
+
+  color: white;
+
+  font-size: 1rem;
+
+  transition: 0.3s;
+
+  cursor: pointer;
+}
+
+#cartBtn:hover {
+  color: #3b82f6;
+}
+
+#backHomeBtn {
+
+  text-decoration: none;
+
+  color: white;
+
+  font-size: 1rem;
+
+  transition: 0.3s;
+
+  cursor: pointer;
+}
+
+#backHomeBtn:hover {
+
+  color: #3b82f6;
+}
+
+.auth-buttons a:hover {
+  color: #3b82f6;
+}
+
+/* LOGO */
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+.logo-text {
+  color: white;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+/* ICONO PERFIL */
+
+.profile-icon {
+  color: #2563eb;
+  font-size: 1.6rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.profile-icon:hover {
+  color: #3b82f6;
+}
+
+.profile-wrapper {
+  position: relative;
+}
+
+.profile-dropdown {
+
+  position: absolute;
+
+  top: 60px;
+  right: 0;
+
+  width: 280px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(15,23,42,0.98),
+      rgba(2,6,23,0.98)
+    );
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  border-radius: 18px;
+
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  box-shadow:
+    0 20px 40px rgba(0,0,0,0.45);
+
+  backdrop-filter: blur(16px);
+
+  animation: dropdownFade 0.2s ease;
+}
+
+.profile-info {
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.profile-info p {
+
+  margin: 0;
+
+  padding: 10px 12px;
+
+  border-radius: 10px;
+
+  background:
+    rgba(255,255,255,0.04);
+
+  font-size: 0.95rem;
+
+  border:
+    1px solid rgba(255,255,255,0.03);
+}
+
+#logoutBtn {
+
+  border: none;
+
+  padding: 12px;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #dc2626,
+      #b91c1c
+    );
+
+  color: white;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.25s;
+}
+
+#logoutBtn:hover {
+
+  transform: translateY(-2px);
+
+  background:
+    linear-gradient(
+      135deg,
+      #ef4444,
+      #dc2626
+    );
+}
+
+@keyframes dropdownFade {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+      translateY(-10px)
+      scale(0.98);
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+/* BOTÓN MIS ENTRADAS (IMPORTANTE FIX) */
+
+.navbar-btn {
+  background: transparent;
+  border: 1px solid white;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: 0.3s;
+}
+
+.navbar-btn:hover {
+  background: white;
+  color: black;
+}
+
+/* ESTE ES EL FIX CLAVE */
+.hidden {
+  display: none !important;
+}
+
+/* ================= HERO ================= */
+
 .hero {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+
   height: 420px;
-  background: url("ImagenConcierto.png") no-repeat center center / cover;
+  background: url("ImagenConcierto.png") no-repeat center / cover;
 }
 
 .hero-overlay {
@@ -39,84 +311,21 @@ body {
 .hero p {
   font-size: 1.2rem;
   opacity: 0.95;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
 }
+
+/* ================= MAIN ================= */
 
 .container {
   padding: 40px;
 }
 
-.event-admin {
-  margin-bottom: 32px;
-  padding: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  background: rgba(15, 23, 42, 0.6);
-}
-
-.event-admin-header {
+.events-header {
+  width: 100%;
   display: flex;
   justify-content: space-between;
-  gap: 16px;
   align-items: center;
-}
-
-.event-admin h2 {
-  margin: 0;
-  font-size: 1.2rem;
-}
-
-.secondary-btn {
-  padding: 9px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 8px;
-  background: transparent;
-  color: white;
-  cursor: pointer;
-}
-
-.secondary-btn:hover,
-.secondary-btn:focus-visible {
-  border-color: #3b82f6;
-}
-
-.event-form {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(160px, 1fr));
-  gap: 12px;
-  align-items: end;
-  margin-top: 18px;
-}
-
-.event-form[hidden] {
-  display: none;
-}
-
-.event-form label {
-  display: grid;
-  gap: 6px;
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
-
-.event-form input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  background: #0f172a;
-  color: white;
-}
-
-.form-message {
-  grid-column: 1 / -1;
-  min-height: 20px;
-  margin: 0;
-  color: #86efac;
-}
-
-.form-message.error {
-  color: #fca5a5;
+  gap: 20px;
+  margin-bottom: 25px;
 }
 
 .section-title {
@@ -125,6 +334,17 @@ body {
   border-left: 4px solid #3b82f6;
   font-size: 1.4rem;
 }
+
+.search-events {
+  width: 280px;
+  padding: 12px 16px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  background: #0f172a;
+  color: white;
+}
+
+/* ================= EVENTS ================= */
 
 .events-grid {
   display: grid;
@@ -135,94 +355,543 @@ body {
 .event-card {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 8px;
+  overflow: hidden;
+
   background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: 0.2s;
 }
 
-.event-card:hover,
-.event-card:focus-visible {
+.event-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  outline: none;
 }
 
 .event-image {
   height: 200px;
-  background-position: center;
   background-size: cover;
-  filter: brightness(0.9);
+  background-position: center;
 }
 
 .event-content {
   padding: 15px;
 }
 
-.event-content h3 {
-  margin: 0 0 8px;
-}
-
-.event-content p {
-  margin: 0 0 6px;
-  opacity: 0.75;
-}
-
 .event-btn {
   width: 100%;
   margin-top: 12px;
   padding: 10px;
+
   border: none;
   border-radius: 8px;
+
   background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: white;
   font-weight: 700;
-  cursor: pointer;
-  transition: opacity 0.2s;
 }
 
-.event-btn:hover,
-.event-btn:focus-visible {
-  opacity: 0.9;
-}
+/* ================= FOOTER ================= */
 
 .footer {
   margin-top: 50px;
   padding: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  background: #020617;
   text-align: center;
-}
-
-.footer p {
-  margin: 0;
-  font-size: 0.9rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
   opacity: 0.6;
 }
 
-@media (max-width: 640px) {
-  .hero {
-    height: 320px;
-  }
+/* Clase maestra para ocultar elementos */
+.hidden {
+    display: none !important;
+}
 
-  .hero h1 {
-    font-size: 2.6rem;
-  }
+/* Estilo para las tablas de gestión */
+.staff-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: white;
+    color: #333;
+}
 
-  .container {
-    padding: 24px;
-  }
+.staff-table th, .staff-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
 
-  .event-admin-header,
-  .event-form {
+.staff-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+/* Botón de eliminar con estilo de alerta */
+.btn-del {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-del:hover {
+    background-color: #cc0000;
+}
+
+/* ================= STAFF PANEL STYLES ================= */
+
+/* Contenedor del Panel */
+#staffPanel {
+    background: rgba(15, 23, 42, 0.4);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 20px;
+    padding: 30px;
+}
+
+.admin-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.btn-close-admin {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-close-admin:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Tabs (Navegación del Panel) */
+.admin-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: 0.3s;
+    border-radius: 8px;
+}
+
+.tab-btn i {
+    margin-right: 8px;
+}
+
+.tab-btn:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn.active {
+    color: #3b82f6;
+    background: rgba(59, 130, 246, 0.1);
+    font-weight: 600;
+}
+
+/* Tablas Estilo Dark */
+.staff-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: transparent; /* Quitamos el fondo blanco */
+    color: white;
+}
+
+.staff-table th {
+    background: rgba(255, 255, 255, 0.03);
+    color: #94a3b8;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.staff-table td {
+    padding: 16px;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.staff-table tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Botones de acción */
+.btn-add {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-add:hover {
+    background: #2563eb;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+}
+
+.staff-form {
+    margin: 16px 0 24px;
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    background: rgba(15, 23, 42, 0.72);
+}
+
+.staff-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px;
+}
+
+.staff-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: #cbd5e1;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.staff-form input {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    background: #0f172a;
+    color: white;
+}
+
+.form-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 16px;
+}
+
+.form-message {
+    margin: 0;
+    color: #22c55e;
+    font-weight: 600;
+}
+
+.form-message.error {
+    color: #ef4444;
+}
+
+/* Badge de Rol */
+.role-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    background: #3b82f6;
+    color: white;
+    width: fit-content;
+}
+
+/* MODAL STYLES */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: #0f172a;
+    padding: 30px;
+    border-radius: 20px;
+    width: 400px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-content h3 { margin-top: 0; margin-bottom: 20px; }
+
+#eventForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#eventForm input {
+    padding: 12px;
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: white;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+#adminPanelBtn {
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#adminPanelBtn:hover {
+  color: #3b82f6;
+}
+
+/* ========================= */
+/* EVENT MODAL SECTORS */
+/* ========================= */
+
+.sector-box {
+
+  margin-top: 10px;
+
+  padding: 18px;
+
+  border-radius: 14px;
+
+  background:
+    rgba(255,255,255,0.03);
+
+  border:
+    1px solid rgba(255,255,255,0.06);
+}
+
+.sector-box h4 {
+
+  margin-top: 0;
+  margin-bottom: 15px;
+
+  color: #fff;
+
+  font-size: 1rem;
+}
+
+#sectorsContainer {
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+.sector-item {
+
+  display: grid;
+
+  grid-template-columns:
+    1.2fr
+    1fr
+    1fr
+    auto;
+
+  gap: 10px;
+
+  align-items: center;
+}
+
+.sector-item input {
+
+  width: 100%;
+}
+
+.sector-item button {
+
+  height: 42px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #dc2626;
+
+  color: white;
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.sector-item button:hover {
+
+  background: #ef4444;
+}
+
+.btn-add-sector {
+
+  margin-top: 15px;
+
+  width: 100%;
+
+  padding: 12px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background:
+    rgba(59,130,246,0.15);
+
+  color: #60a5fa;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.25s;
+}
+
+.btn-add-sector:hover {
+
+  background:
+    rgba(59,130,246,0.25);
+}
+
+/* ========================= */
+/* TABLA EVENTOS */
+/* ========================= */
+
+.table-responsive {
+
+  overflow-x: auto;
+}
+
+.staff-table td {
+
+  vertical-align: middle;
+}
+
+/* ========================= */
+/* BOTONES ACCIONES */
+/* ========================= */
+
+.btn-edit {
+
+  background: #2563eb;
+
+  color: white;
+
+  border: none;
+
+  padding: 8px 12px;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  margin-right: 8px;
+
+  transition: 0.2s;
+}
+
+.btn-edit:hover {
+
+  background: #3b82f6;
+}
+
+.btn-del {
+
+  background: #dc2626;
+
+  color: white;
+
+  border: none;
+
+  padding: 8px 12px;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.btn-del:hover {
+
+  background: #ef4444;
+}
+
+/* ========================= */
+/* MODAL MÁS GRANDE */
+/* ========================= */
+
+.modal-content {
+
+  width: 650px;
+
+  max-height: 90vh;
+
+  overflow-y: auto;
+}
+
+/* ========================= */
+/* SELECT */
+/* ========================= */
+
+#eventForm select {
+
+  padding: 12px;
+
+  background: #1e293b;
+
+  border:
+    1px solid rgba(255,255,255,0.1);
+
+  border-radius: 10px;
+
+  color: white;
+}
+
+/* ========================= */
+/* MOBILE */
+/* ========================= */
+
+@media (max-width: 700px) {
+
+  .sector-item {
+
     grid-template-columns: 1fr;
   }
 
-  .event-admin-header {
-    align-items: stretch;
-    flex-direction: column;
+  .modal-content {
+
+    width: 95%;
+  }
+
+  .admin-tabs {
+
+    overflow-x: auto;
   }
 }

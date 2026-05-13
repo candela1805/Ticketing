@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Ticket.Models;
+using Ticket.Services;
 
 namespace Ticket.Data;
 
@@ -44,9 +45,15 @@ public static class DbSeeder
             ])
     ];
 
-    public static async Task SeedAsync(AppDbContext context)
+    public static async Task SeedAsync(AppDbContext context, IPasswordHashService passwordHashService)
     {
-        await EnsureDemoUserAsync(context);
+        await EnsureRoleColumnAsync(context);
+        await EnsureEmployeesTableAsync(context);
+        await EnsureClientsTableAsync(context);
+        await EnsurePurchasesTableAsync(context);
+        await EnsurePurchasePaymentMethodColumnAsync(context);
+        await EnsureEmployeeUserAsync(context, passwordHashService);
+        await EnsureAdminUserAsync(context, passwordHashService);
 
         foreach (var demoEvent in DemoEvents)
         {
@@ -56,20 +63,122 @@ public static class DbSeeder
         await context.SaveChangesAsync();
     }
 
-    private static async Task EnsureDemoUserAsync(AppDbContext context)
+    private static async Task EnsureRoleColumnAsync(AppDbContext context)
     {
-        var userExists = await context.Users.AnyAsync(user => user.Email == "demo@test.com");
+        await context.Database.ExecuteSqlRawAsync("""
+            ALTER TABLE `Users`
+            ADD COLUMN IF NOT EXISTS `Role` varchar(32) NOT NULL DEFAULT 'Client';
+            """);
+    }
 
-        if (userExists)
+    private static async Task EnsureEmployeesTableAsync(AppDbContext context)
+    {
+        await context.Database.ExecuteSqlRawAsync("""
+            CREATE TABLE IF NOT EXISTS `Employees` (
+                `Id` int NOT NULL AUTO_INCREMENT,
+                `UserId` int NOT NULL,
+                `DocumentNumber` varchar(64) NOT NULL,
+                `Phone` varchar(64) NOT NULL,
+                `CreatedAt` datetime(6) NOT NULL,
+                CONSTRAINT `PK_Employees` PRIMARY KEY (`Id`),
+                UNIQUE KEY `IX_Employees_UserId` (`UserId`),
+                UNIQUE KEY `IX_Employees_DocumentNumber` (`DocumentNumber`),
+                CONSTRAINT `FK_Employees_Users_UserId` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE CASCADE
+            ) CHARACTER SET=utf8mb4;
+            """);
+    }
+
+    private static async Task EnsureClientsTableAsync(AppDbContext context)
+    {
+        await context.Database.ExecuteSqlRawAsync("""
+            CREATE TABLE IF NOT EXISTS `Clients` (
+                `Id` int NOT NULL AUTO_INCREMENT,
+                `UserId` int NOT NULL,
+                `CreatedAt` datetime(6) NOT NULL,
+                CONSTRAINT `PK_Clients` PRIMARY KEY (`Id`),
+                UNIQUE KEY `IX_Clients_UserId` (`UserId`),
+                CONSTRAINT `FK_Clients_Users_UserId` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE CASCADE
+            ) CHARACTER SET=utf8mb4;
+            """);
+    }
+
+    private static async Task EnsurePurchasesTableAsync(AppDbContext context)
+    {
+        await context.Database.ExecuteSqlRawAsync("""
+            CREATE TABLE IF NOT EXISTS `Purchases` (
+                `Id` char(36) COLLATE ascii_general_ci NOT NULL,
+                `UserId` int NOT NULL,
+                `ReservationId` char(36) COLLATE ascii_general_ci NOT NULL,
+                `SeatId` char(36) COLLATE ascii_general_ci NOT NULL,
+                `PurchasedAt` datetime(6) NOT NULL,
+                `Status` longtext NOT NULL,
+                `PaymentMethod` longtext NOT NULL,
+                CONSTRAINT `PK_Purchases` PRIMARY KEY (`Id`),
+                UNIQUE KEY `IX_Purchases_ReservationId` (`ReservationId`),
+                KEY `IX_Purchases_UserId` (`UserId`),
+                KEY `IX_Purchases_SeatId` (`SeatId`),
+                CONSTRAINT `FK_Purchases_Users_UserId` FOREIGN KEY (`UserId`) REFERENCES `Users` (`Id`) ON DELETE RESTRICT,
+                CONSTRAINT `FK_Purchases_Reservations_ReservationId` FOREIGN KEY (`ReservationId`) REFERENCES `Reservations` (`Id`) ON DELETE RESTRICT,
+                CONSTRAINT `FK_Purchases_Seats_SeatId` FOREIGN KEY (`SeatId`) REFERENCES `Seats` (`Id`) ON DELETE RESTRICT
+            ) CHARACTER SET=utf8mb4;
+            """);
+    }
+
+    private static async Task EnsurePurchasePaymentMethodColumnAsync(AppDbContext context)
+    {
+        await context.Database.ExecuteSqlRawAsync("""
+            ALTER TABLE `Purchases`
+            ADD COLUMN IF NOT EXISTS `PaymentMethod` longtext NOT NULL;
+            """);
+    }
+
+    private static async Task EnsureEmployeeUserAsync(
+        AppDbContext context,
+        IPasswordHashService passwordHashService)
+    {
+        const string employeeEmail = "employee@test.com";
+
+        var employee = await context.Users
+            .FirstOrDefaultAsync(u => u.Email == employeeEmail);
+
+        if (employee is not null)
         {
+            employee.Name = "Empleado Demo";
+            employee.Role = UserRoles.Employee;
+            employee.PasswordHash = passwordHashService.HashPassword("employee");
             return;
         }
 
         context.Users.Add(new User
         {
-            Name = "Cliente Demo",
-            Email = "demo@test.com",
-            PasswordHash = "1234"
+            Name = "Empleado Demo",
+            Email = employeeEmail,
+            Role = UserRoles.Employee,
+            PasswordHash = passwordHashService.HashPassword("employee")
+        });
+    }
+
+    private static async Task EnsureAdminUserAsync(
+        AppDbContext context,
+        IPasswordHashService passwordHashService)
+    {
+        const string adminEmail = "admin@admin.com";
+        var admin = await context.Users.FirstOrDefaultAsync(user => user.Email == adminEmail);
+
+        if (admin is not null)
+        {
+            admin.Name = "admin";
+            admin.Role = UserRoles.Admin;
+            admin.PasswordHash = passwordHashService.HashPassword("admin");
+            return;
+        }
+
+        context.Users.Add(new User
+        {
+            Name = "admin",
+            Email = adminEmail,
+            Role = UserRoles.Admin,
+            PasswordHash = passwordHashService.HashPassword("admin")
         });
     }
 

@@ -1,0 +1,83 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0b1020;
+  color: white;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  background: #070b18;
+}
+
+.btn-back {
+  color: white;
+  text-decoration: none;
+  background: #1f2a44;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.panel {
+  padding: 20px;
+}
+
+.menu {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.menu button {
+  background: #16213e;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.menu button:hover {
+  background: #1f2a44;
+}
+
+.seccion {
+  margin-top: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+table {
+  width: 100%;
+  margin-top: 15px;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #1f2a44;
+}
+
+#adminPanelBtn,
+#adminPanelBtn:visited,
+#adminPanelBtn:active {
+  color: white;
+  text-decoration: none;
+}
+
+.btn-del {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-del:hover {
+    background-color: #cc0000;
+}
