@@ -11,6 +11,10 @@ namespace Ticket.Controllers;
 [Route("api/v1/users")]
 public class UsersController : ControllerBase
 {
+    private const string ReservedStatus = "Reserved";
+    private const string SoldStatus = "Sold";
+    private const string AvailableStatus = "Available";
+
     private readonly AppDbContext _context;
     private readonly IPasswordHashService _passwordHashService;
 
@@ -154,29 +158,61 @@ public class UsersController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
-        var user = await _context.Users.FindAsync(id);
+        var user = await _context.Users
+            .Include(currentUser => currentUser.Reservations)
+                .ThenInclude(reservation => reservation.Seat)
+            .Include(currentUser => currentUser.Purchases)
+            .FirstOrDefaultAsync(currentUser => currentUser.Id == id);
 
         if (user == null)
         {
             return NotFound(new { message = "Usuario no encontrado" });
         }
 
-        if (user.Role == "Admin")
+        if (user.Role == UserRoles.Admin)
         {
             return BadRequest(new { message = "No se puede eliminar un administrador" });
         }
 
         try
         {
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            var releasedSeats = ReleaseUserSeats(user.Reservations);
 
-            return Ok(new { message = "Usuario eliminado correctamente" });
+            _context.Purchases.RemoveRange(user.Purchases);
+            _context.Reservations.RemoveRange(user.Reservations);
+            _context.Users.Remove(user);
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return Ok(new
+            {
+                message = "Usuario eliminado correctamente",
+                releasedSeats
+            });
         }
         catch (Exception ex)
         {
             return StatusCode(500, new { message = "Error al eliminar: " + ex.Message });
         }
+    }
+
+    private static int ReleaseUserSeats(IEnumerable<Reservation> reservations)
+    {
+        var releasedSeats = 0;
+
+        foreach (var seat in reservations
+            .Select(reservation => reservation.Seat)
+            .Where(seat => seat.Status == ReservedStatus || seat.Status == SoldStatus)
+            .DistinctBy(seat => seat.Id))
+        {
+            seat.Status = AvailableStatus;
+            seat.Version++;
+            releasedSeats++;
+        }
+
+        return releasedSeats;
     }
 
 
