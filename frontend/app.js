@@ -764,11 +764,36 @@ function createSeatButton(seat) {
 }
 
 function toggleSeatSelection(seatId) {
-
+  
   if (!currentUser) {
     showLoginToast();
     return;
   }
+
+  const isEmployee = currentUser?.role === EMPLOYEE_ROLE;
+
+  if (isEmployee) {
+
+  const toast = document.getElementById("toast");
+
+  if (toast) {
+
+    toast.hidden = false;
+
+    toast.innerHTML = `
+      El staff no puede reservar butacas
+    `;
+
+    clearTimeout(showLoginToast.timeoutId);
+
+    showLoginToast.timeoutId = setTimeout(() => {
+      toast.hidden = true;
+    }, 3000);
+  }
+
+  return;
+}
+  
 
   if (selectedSeatIds.has(seatId)) {
     selectedSeatIds.delete(seatId);
@@ -1806,12 +1831,19 @@ function renderUIByRole() {
   const isStaff = isStaffUser(user);
   const isAdmin = user.role === ADMIN_ROLE;
 
+  const backHomeBtn = document.getElementById("backHomeBtn");
+
   authButtons?.classList.add("hidden");
   myTicketsBtn?.classList.toggle("hidden", isStaff);
   cartBtn?.classList.toggle("hidden", isStaff);
   adminPanelBtn?.classList.toggle("hidden", !isStaff);
   tabStaff?.classList.toggle("hidden", !isAdmin);
   closeAdminButton?.classList.toggle("hidden", isAdmin);
+
+backHomeBtn?.classList.toggle(
+  "hidden",
+  currentUser.role !== EMPLOYEE_ROLE
+);
 
   if (mainClientView) {
     mainClientView.hidden = isAdmin;
@@ -1888,8 +1920,15 @@ function openStaffPanel() {
 
   closeAdminButton?.classList.toggle("hidden", isAdmin);
 
+  if (currentUser.role === EMPLOYEE_ROLE) {
   document.getElementById("adminPanelBtn")
     ?.classList.add("hidden");
+}
+
+  if (currentUser.role === EMPLOYEE_ROLE) {
+  document.getElementById("backStoreBtn")
+    ?.classList.remove("hidden");
+}  
 
   switchTab(isAdmin ? "staff" : "events");
 }
@@ -1910,6 +1949,9 @@ function closeAdminPanel() {
   if (mainClientView) {
     mainClientView.hidden = false;
   }
+
+  document.getElementById("backStoreBtn")
+    ?.classList.add("hidden");
 
   const user = currentUser;
 
@@ -1991,7 +2033,21 @@ function renderAdminEvents() {
   });
 }
 
-function openEventModal() {
+function openEventModal(mode = "create") {
+  const form = document.getElementById("eventForm");
+  const title = document.getElementById("modalTitle");
+
+  if (mode === "create" && form) {
+    form.reset();
+    delete form.dataset.editing;
+    eventSectors = [{ name: "General", price: 10000, capacity: 50 }];
+    renderSectorList();
+  }
+
+  if (title) {
+    title.textContent = mode === "edit" ? "Editar Evento" : "Nuevo Evento";
+  }
+
   document.getElementById("eventModal")?.classList.remove("hidden");
 }
 
@@ -2010,6 +2066,7 @@ document.getElementById("eventForm")?.addEventListener("submit", async (e) => {
         const name = document.getElementById("evName")?.value?.trim();
         const venue = document.getElementById("evVenue")?.value?.trim();
         const dateValue = document.getElementById("evDate")?.value;
+        const status = document.getElementById("evStatus")?.value || "Active";
 
         if (!name || !venue || !dateValue) {
             alert("Por favor, completa todos los campos del evento.");
@@ -2017,6 +2074,7 @@ document.getElementById("eventForm")?.addEventListener("submit", async (e) => {
         }
 
         const sectors = (getSectorsFromDOM() || []).map(s => ({
+            id: s.id,
             name: s.name,
             price: parseFloat(s.price) || 0,
             capacity: parseInt(s.capacity, 10) || 0
@@ -2026,34 +2084,21 @@ document.getElementById("eventForm")?.addEventListener("submit", async (e) => {
             name,
             venue,
             eventDate: new Date(dateValue).toISOString(),
+            status,
             sectors
         };
 
         const url = editingId ? `${API_BASE}/events/${editingId}` : `${API_BASE}/events`;
         const method = editingId ? "PUT" : "POST";
 
-        const response = await fetch(url, {
+        await fetchJson(url, {
             method,
             headers: {
                 "Content-Type": "application/json",
-                "X-User-Id": currentUser.id
+                "X-User-Id": String(currentUser.id)
             },
             body: JSON.stringify(payload)
         });
-
-        // 5. Manejo de respuesta
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error("Detalle del error del servidor:", errorData);
-            
-            // Si el servidor devuelve errores de validación específicos (ModelState)
-            if (errorData.errors) {
-                const messages = Object.values(errorData.errors).flat().join("\n");
-                throw new Error(`Error de validación:\n${messages}`);
-            }
-            
-            throw new Error(errorData.message || `Error ${response.status}`);
-        }
 
         // 6. Éxito: Actualizar UI y limpiar
         await loadAdminEvents();
@@ -2082,14 +2127,22 @@ function editEvent(eventId) {
   document.getElementById("evName").value = ev.name || "";
   document.getElementById("evVenue").value = ev.venue || "";
   document.getElementById("evDate").value = ev.eventDate?.slice(0, 16) || "";
+  document.getElementById("evStatus").value = ev.status || "Active";
 
-  eventSectors = ev.sectors ? [...ev.sectors] : [];
+  eventSectors = ev.sectors?.length
+    ? ev.sectors.map((sector) => ({
+        id: sector.id || null,
+        name: sector.name || "",
+        price: sector.price || 0,
+        capacity: sector.capacity || 1
+      }))
+    : [{ name: "General", price: 10000, capacity: 50 }];
   renderSectorList();
 
   const form = document.getElementById("eventForm");
   form.dataset.editing = eventId;
 
-  openEventModal();
+  openEventModal("edit");
 }
 
 
@@ -2245,6 +2298,10 @@ async function loadPayments() {
 window.addSector = function () {
   const container = document.getElementById("sectorsContainer");
 
+  if (!container) {
+    return;
+  }
+
   const div = document.createElement("div");
   div.className = "sector-item";
 
@@ -2252,7 +2309,7 @@ window.addSector = function () {
     <input type="text" class="sector-name" placeholder="Nombre sector" required>
     <input type="number" class="sector-price" placeholder="Precio" required>
     <input type="number" class="sector-capacity" placeholder="Capacidad" required>
-    <button type="button" onclick="this.parentElement.remove()">X</button>
+    <button type="button" onclick="this.parentElement.remove()">Eliminar</button>
   `;
 
   container.appendChild(div);
@@ -2260,32 +2317,53 @@ window.addSector = function () {
 
 
 function renderSectorList() {
-  const container = document.getElementById("sectorList");
+  const container = document.getElementById("sectorsContainer");
   if (!container) return;
 
   container.innerHTML = eventSectors.map((s, i) => `
-    <div class="sector-item">
-      ${s.name} - $${s.price} - cap ${s.capacity}
-      <button onclick="removeSector(${i})">X</button>
+    <div class="sector-item" data-sector-id="${Number(s.id) || ""}">
+      <input
+        type="text"
+        class="sector-name"
+        placeholder="Nombre sector"
+        value="${escapeHtmlAttribute(s.name || "")}"
+        required
+      >
+      <input
+        type="number"
+        class="sector-price"
+        placeholder="Precio"
+        value="${Number(s.price) || 0}"
+        required
+      >
+      <input
+        type="number"
+        class="sector-capacity"
+        placeholder="Capacidad"
+        value="${Number(s.capacity) || 1}"
+        required
+      >
+      <button type="button" onclick="removeSector(${i})">Eliminar</button>
     </div>
   `).join("");
 }
 
 function removeSector(index) {
-  eventSectors.splice(index, 1);
-  renderSectorList();
+  const sectors = Array.from(document.querySelectorAll("#sectorsContainer .sector-item"));
+  sectors[index]?.remove();
 }
 
 
 function getSectorsFromDOM() {
-  const sectors = document.querySelectorAll(".sector-item");
+  const sectors = document.querySelectorAll("#sectorsContainer .sector-item");
 
   const result = Array.from(sectors).map(div => {
+    const id = Number(div.dataset.sectorId) || null;
     const name = div.querySelector(".sector-name")?.value?.trim();
     const price = Number(div.querySelector(".sector-price")?.value);
     const capacity = Number(div.querySelector(".sector-capacity")?.value);
 
-    return { name, price, capacity };
+    return { id, name, price, capacity };
   });
 
   // validación UX (ANTES de enviar)
@@ -2306,6 +2384,14 @@ function getSectorsFromDOM() {
   }
 
   return result;
+}
+
+function escapeHtmlAttribute(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("\"", "&quot;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
 }
 
 async function deleteUser(userId) {

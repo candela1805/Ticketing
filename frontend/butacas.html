@@ -7,6 +7,57 @@
   <link rel="stylesheet" href="butacas.css">
 </head>
 <body>
+<nav class="navbar">
+
+  <div
+      class="logo-container"
+      onclick="window.location.href='index.html'"
+      style="cursor:pointer"
+    >
+
+      <img
+        src="Ticket.icon.png"
+        class="logo-icon"
+      >
+
+      <span class="logo-text">
+        Ticketing
+      </span>
+
+    </div>
+
+  <div class="navbar-right">
+
+    <div id="navLinks">
+
+      <a
+    href="index.html"
+    id="backHomeBtn"
+    class="hidden"
+    >
+      Inicio
+    </a>
+    
+      <a
+        href="Mis.entradas.html"
+        id="myTicketsBtn"
+        class="hidden"
+      >
+        Mis entradas
+      </a>
+
+      <a
+        href="carrito.html"
+        id="cartBtn"
+        class="hidden"
+      >
+        Carrito
+      </a>
+
+    </div>
+
+</nav>
+
   <header class="header">
     <h1>Seleccionar asientos</h1>
   </header>
@@ -33,6 +84,8 @@
       </div>
     </main>
   </div>
+
+<div id="toast" class="toast" hidden></div>
 
   <script src="app.js"></script>
 </body>

@@ -18,4 +18,6 @@ public class Reservation
 
     [ForeignKey("SeatId")]
     public Seat Seat { get; set; } = null!;
+
+    public Purchase? Purchase { get; set; }
 }
