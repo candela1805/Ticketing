@@ -1,56 +1,655 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ticketing</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <header class="hero">
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <h1>Ticketing</h1>
-      <p>Tus entradas, sin filas y al instante</p>
-    </div>
-  </header>
 
-  <main class="container">
-    <section class="event-admin">
-      <div class="event-admin-header">
-        <h2>Crear evento provisorio</h2>
-        <button id="toggleCreateEventBtn" class="secondary-btn" type="button">Nuevo evento</button>
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Ticketing - Gestión Pro</title>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  >
+
+</head>
+
+<body>
+
+  <!-- ========================= -->
+  <!-- NAVBAR -->
+  <!-- ========================= -->
+
+  <nav class="navbar">
+
+    <div
+      class="logo-container"
+      onclick="window.location.href='index.html'"
+      style="cursor:pointer"
+    >
+
+      <img
+        src="Ticket.icon.png"
+        class="logo-icon"
+      >
+
+      <span class="logo-text">
+        Ticketing
+      </span>
+
+    </div>
+
+    <div class="navbar-right">
+
+      <div id="navLinks">
+
+        <a
+          id="adminPanelBtn"
+          class="nav-link hidden"
+          onclick="openStaffPanel()"
+        >
+          Gestión
+        </a>
+
+        <a
+          href="Mis.entradas.html"
+          id="myTicketsBtn"
+          class="hidden"
+        >
+          Mis entradas
+        </a>
+
+        <a
+          href="carrito.html"
+          id="cartBtn"
+          class="hidden"
+        >
+          Carrito 🛒
+        </a>
+
       </div>
 
-      <form id="createEventForm" class="event-form" hidden>
-        <label>
-          Nombre
-          <input id="eventName" name="eventName" type="text" placeholder="Recital acustico" required>
-        </label>
+      <div
+        class="auth-buttons"
+        id="authButtons"
+      >
 
-        <label>
-          Lugar
-          <input id="eventVenue" name="eventVenue" type="text" placeholder="Teatro Central" required>
-        </label>
+        <a href="login.html">
+          Iniciar sesión
+        </a>
 
-        <label>
-          Fecha
-          <input id="eventDate" name="eventDate" type="datetime-local" required>
-        </label>
+        <a href="register.html">
+          Registrarse
+        </a>
 
-        <button id="createEventBtn" class="event-btn" type="submit">Crear evento</button>
-        <p id="createEventMessage" class="form-message" aria-live="polite"></p>
-      </form>
+      </div>
+
+      <!-- PERFIL -->
+
+      <div class="profile-wrapper">
+
+        <div
+          class="profile-icon"
+          id="profileIcon"
+        >
+
+          <i class="fa-solid fa-user"></i>
+
+        </div>
+
+        <div
+          class="profile-dropdown hidden"
+          id="profileDropdown"
+        >
+
+          <div class="profile-info">
+
+            <p id="profileName"></p>
+
+            <p id="profileEmail"></p>
+
+            <p
+              id="profileRole"
+              class="role-badge"
+            ></p>
+
+          </div>
+
+          <hr>
+
+          <button
+            id="logoutBtn"
+            class="btn-logout"
+          >
+            Cerrar sesión
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </nav>
+
+  <!-- ========================= -->
+  <!-- CLIENT VIEW -->
+  <!-- ========================= -->
+
+  <main id="mainClientView">
+
+    <header class="hero">
+
+      <div class="hero-overlay"></div>
+
+      <div class="hero-content">
+
+        <h1>Ticketing</h1>
+
+        <p>
+          Tus entradas, sin filas y al instante
+        </p>
+
+      </div>
+
+    </header>
+
+    <section class="container">
+
+      <div class="events-header">
+
+        <h2 class="section-title">
+          Próximos eventos
+        </h2>
+
+        <input
+          type="text"
+          id="searchEvents"
+          class="search-events"
+          placeholder="Buscar evento..."
+        >
+
+      </div>
+
+      <div
+        id="eventsList"
+        class="events-grid"
+      ></div>
+
     </section>
 
-    <h2 class="section-title">Proximos eventos</h2>
-    <div id="eventsList" class="events-grid"></div>
   </main>
 
+  <!-- ========================= -->
+  <!-- PANEL STAFF -->
+  <!-- ========================= -->
+
+  <section
+    id="staffPanel"
+    class="container"
+    hidden
+  >
+
+    <div class="admin-header-flex">
+
+      <h2 class="section-title">
+        Panel de Control
+      </h2>
+
+      <button
+        class="btn-close-admin"
+        onclick="closeAdminPanel()"
+      >
+        Volver a la tienda
+      </button>
+
+    </div>
+
+    <!-- TABS -->
+
+    <div class="admin-tabs">
+
+      <button
+        class="tab-btn active"
+        data-tab="events"
+        onclick="switchTab('events')"
+      >
+
+        <i class="fa-solid fa-calendar-days"></i>
+        Eventos
+
+      </button>
+
+      <button
+        class="tab-btn"
+        data-tab="users"
+        onclick="switchTab('users')"
+      >
+
+        <i class="fa-solid fa-users"></i>
+        Clientes
+
+      </button>
+
+      <button
+        id="tabStaff"
+        class="tab-btn hidden"
+        data-tab="staff"
+        onclick="switchTab('staff')"
+      >
+
+        <i class="fa-solid fa-user-tie"></i>
+        Empleados
+
+      </button>
+
+      <button
+        class="tab-btn"
+        data-tab="payments"
+        onclick="switchTab('payments')"
+      >
+
+        <i class="fa-solid fa-money-bill"></i>
+        Pagos
+
+      </button>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- TAB EVENTOS -->
+    <!-- ========================= -->
+
+    <div
+      id="tab-events"
+      class="tab-content"
+    >
+
+      <div class="tab-header">
+
+        <h3>
+          Gestión de Eventos
+        </h3>
+
+        <button
+          class="btn-add"
+          onclick="openEventModal()"
+        >
+
+          + Crear Nuevo Evento
+
+        </button>
+
+      </div>
+
+      <div class="table-responsive">
+
+        <table class="staff-table">
+
+          <thead>
+
+            <tr>
+
+              <th>Evento</th>
+
+              <th>Fecha</th>
+
+              <th>Lugar</th>
+
+              <th>Sectores</th>
+
+              <th>Estado</th>
+
+              <th>Acciones</th>
+
+            </tr>
+
+          </thead>
+
+          <tbody id="adminEventsList"></tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- TAB CLIENTES -->
+    <!-- ========================= -->
+
+    <div
+      id="tab-users"
+      class="tab-content hidden"
+    >
+
+      <h3>
+        Clientes Registrados
+      </h3>
+
+      <table class="staff-table">
+
+        <thead>
+
+          <tr>
+
+            <th>Nombre</th>
+
+            <th>Email</th>
+
+            <th>Acciones</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody id="clientsListTable"></tbody>
+
+      </table>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- TAB STAFF -->
+    <!-- ========================= -->
+
+    <div
+      id="tab-staff"
+      class="tab-content hidden"
+    >
+
+      <div class="tab-header">
+
+        <h3>
+          Gestion de Empleados
+        </h3>
+
+        <button
+          id="toggleCreateEmployeeBtn"
+          class="btn-add"
+          type="button"
+        >
+          + Crear Empleado
+        </button>
+
+      </div>
+
+      <form
+        id="createEmployeeForm"
+        class="staff-form"
+        hidden
+      >
+
+        <div class="staff-form-grid">
+
+          <label>
+            Nombre
+            <input
+              type="text"
+              name="employeeName"
+              required
+            >
+          </label>
+
+          <label>
+            Email
+            <input
+              type="email"
+              name="employeeEmail"
+              required
+            >
+          </label>
+
+          <label>
+            Contrasena
+            <input
+              type="password"
+              name="employeePassword"
+              minlength="4"
+              required
+            >
+          </label>
+
+          <label>
+            Documento
+            <input
+              type="text"
+              name="employeeDocumentNumber"
+              required
+            >
+          </label>
+
+          <label>
+            Telefono
+            <input
+              type="tel"
+              name="employeePhone"
+              required
+            >
+          </label>
+
+        </div>
+
+        <div class="form-actions">
+
+          <button
+            id="createEmployeeBtn"
+            class="btn-add"
+            type="submit"
+          >
+            Guardar empleado
+          </button>
+
+          <p
+            id="createEmployeeMessage"
+            class="form-message"
+          ></p>
+
+        </div>
+
+      </form>
+
+      <table class="staff-table">
+
+        <thead>
+
+          <tr>
+
+            <th>Nombre</th>
+
+            <th>Email</th>
+
+            <th>Rol</th>
+
+            <th>Acciones</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody id="staffListTable"></tbody>
+
+      </table>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- TAB PAGOS -->
+    <!-- ========================= -->
+
+    <div
+      id="tab-payments"
+      class="tab-content hidden"
+    >
+
+      <h3>
+        Historial de Ventas
+      </h3>
+
+      <div id="paymentsLog"></div>
+
+    </div>
+
+  </section>
+
+  <!-- ========================= -->
+  <!-- FOOTER -->
+  <!-- ========================= -->
+
   <footer class="footer">
-    <p>&copy; 2026 Ticketing. Todos los derechos reservados</p>
+
+    <p>
+      &copy; 2026 Ticketing.
+      Todos los derechos reservados
+    </p>
+
   </footer>
 
+  <!-- ========================= -->
+  <!-- MODAL EVENTOS -->
+  <!-- ========================= -->
+
+  <div
+    id="eventModal"
+    class="modal hidden"
+  >
+
+    <div class="modal-content">
+
+      <h3 id="modalTitle">
+        Nuevo Evento
+      </h3>
+
+      <form id="eventForm">
+
+        <input
+          type="text"
+          id="evName"
+          placeholder="Nombre del evento"
+          required
+        >
+
+        <input
+          type="datetime-local"
+          id="evDate"
+          required
+        >
+
+        <input
+          type="text"
+          id="evVenue"
+          placeholder="Lugar / Estadio"
+          required
+        >
+
+        <select id="evStatus">
+
+          <option value="Active">
+            Activo
+          </option>
+
+          <option value="Inactive">
+            Inactivo
+          </option>
+
+        </select>
+
+        <!-- ========================= -->
+        <!-- SECTORES -->
+        <!-- ========================= -->
+
+        <div class="sector-box">
+
+          <h4>
+            Sectores
+          </h4>
+
+          <div id="sectorsContainer">
+
+            <!-- SECTOR DEFAULT -->
+
+            <div class="sector-item">
+
+              <input
+                type="text"
+                class="sector-name"
+                placeholder="Nombre sector"
+                value="General"
+                required
+              >
+
+              <input
+                type="number"
+                class="sector-price"
+                placeholder="Precio"
+                value="10000"
+                required
+              >
+
+              <input
+                type="number"
+                class="sector-capacity"
+                placeholder="Capacidad"
+                value="50"
+                required
+              >
+
+            </div>
+
+          </div>
+
+          <button
+            type="button"
+            onclick="addSector()"
+            class="btn-add-sector"
+          >
+
+            + Agregar Sector
+
+          </button>
+
+        </div>
+
+        <!-- ========================= -->
+        <!-- BOTONES -->
+        <!-- ========================= -->
+
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            onclick="closeEventModal()"
+          >
+
+            Cancelar
+
+          </button>
+
+          <button
+            type="submit"
+            class="btn-confirm"
+          >
+
+            Guardar Evento
+
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
   <script src="app.js"></script>
+
 </body>
 </html>

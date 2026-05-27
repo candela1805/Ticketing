@@ -17,4 +17,5 @@ public class Seat
     public Sector Sector { get; set; } = null!;
 
     public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
+    public ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
 }
