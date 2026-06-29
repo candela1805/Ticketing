@@ -15,4 +15,11 @@
 .env
 .env.*
 !.env.example
+appsettings.Local.json
+appsettings.Production.json
+appsettings.*.local.json
+
+# OS / editor
+.DS_Store
+Thumbs.db
 
